@@ -2,6 +2,7 @@ package com.mingle.ZiYou.content;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -48,10 +49,13 @@ import com.mingle.sweetpick.BlurEffect;
 import com.mingle.sweetpick.RecyclerViewDelegate;
 import com.mingle.sweetpick.SweetSheet;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.listener.DownloadFileListener;
 import cn.bmob.v3.listener.FindListener;
 
 public class MapActivity extends AppCompatActivity {
@@ -68,7 +72,7 @@ public class MapActivity extends AppCompatActivity {
     private int pressBtnGo = 0;
     private int point2Move = 0;
     private double alertBound = 0.1;
-
+    private Button download;
     //线路规划相关
     OnGetRoutePlanResultListener mRoutePlanListener = new myOnGetRoutePlanResultListener();
 
@@ -132,6 +136,8 @@ public class MapActivity extends AppCompatActivity {
                 MapActivity.this.finish();
             }
         });
+        download=(Button)findViewById(R.id.download);
+        download.setOnClickListener(myOnClickListener);
 
 
         //
@@ -645,5 +651,64 @@ public class MapActivity extends AppCompatActivity {
             startActivity(intent);
             return false;
         }
+    }
+    private View.OnClickListener myOnClickListener =new View.OnClickListener() {
+        public void onClick(View v) {
+            downloadMP3(1000);
+        }
+
+    };
+    public void downloadMP3(int sid) {
+        BmobQuery<Point> bmobQuery = new BmobQuery<Point>();
+        bmobQuery.addWhereEqualTo("sid", sid);
+        bmobQuery.findObjects(this, new FindListener<Point>() {
+            @Override
+            public void onSuccess(List<Point> object) {
+                for (Point p : object) {
+                    if(p.getPid()==18) {
+                        BmobFile bmobfile = p.getPmp3cn();
+                        if (bmobfile != null) {
+                            //调用bmobfile.download方法
+                            downloadFile(bmobfile);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onError(int code, String msg) {
+                Toast.makeText(getApplicationContext(),"查询失败"+msg,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void downloadFile(BmobFile file){
+        //允许设置下载文件的存储路径，默认下载文件的目录为：context.getApplicationContext().getCacheDir()+"/bmob/"
+        File saveFile = new File(Environment.getExternalStorageDirectory(), file.getFilename());
+        file.download(this,saveFile, new DownloadFileListener() {
+
+            @Override
+            public void onStart() {
+                Toast.makeText(getApplicationContext(),"开始下载.....",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(String savePath) {
+                Toast.makeText(getApplicationContext(),"下载成功，保存路径"+savePath,
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onProgress(Integer value, long newworkSpeed) {
+                Log.i("bmob","下载进度："+value+","+newworkSpeed);
+            }
+
+            @Override
+            public void onFailure(int code, String msg) {
+                Toast.makeText(getApplicationContext(),"下载失败："+code+","+msg,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
