@@ -43,6 +43,7 @@ import com.mingle.ZiYou.bean.Point;
 import com.mingle.ZiYou.clusterutil.clustering.ClusterItem;
 import com.mingle.ZiYou.clusterutil.clustering.ClusterManager;
 import com.mingle.ZiYou.util.DistanceCalculator;
+import com.mingle.ZiYou.util.HillClimbing;
 import com.mingle.entity.MenuEntity;
 import com.mingle.myapplication.R;
 import com.mingle.sweetpick.BlurEffect;
@@ -151,6 +152,20 @@ public class MapActivity extends AppCompatActivity {
                 pressBtnGo++;
                 if(point2Move == 0)
                 {
+
+                    if(points2Travel.size() > 3)
+                    {
+                        List<Point> list = new ArrayList<Point>();
+                        for(int i = 1; i < points2Travel.size() - 1; i++)
+                            list.add(points2Travel.get(i));
+                        HillClimbing hillClimbing = new HillClimbing(list, 5000);
+                        list = hillClimbing.solve();
+                        for(int i = 1; i < points2Travel.size() - 1; i++)
+                        {
+                            points2Travel.remove(i);
+                            points2Travel.add(i, list.get(i - 1));
+                        }
+                    }
                     addMarkers();
                     routineDrawing(point2Move);
                 }
