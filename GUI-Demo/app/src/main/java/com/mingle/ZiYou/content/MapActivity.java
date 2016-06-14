@@ -1,6 +1,5 @@
 package com.mingle.ZiYou.content;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -42,7 +41,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.mingle.ZiYou.bean.Point;
 import com.mingle.ZiYou.clusterutil.clustering.ClusterItem;
 import com.mingle.ZiYou.clusterutil.clustering.ClusterManager;
-import com.mingle.ZiYou.main.MainActivity;
+import com.mingle.ZiYou.util.DistanceCalculator;
 import com.mingle.entity.MenuEntity;
 import com.mingle.myapplication.R;
 import com.mingle.sweetpick.BlurEffect;
@@ -61,16 +60,21 @@ public class MapActivity extends AppCompatActivity {
     private SweetSheet mSweetSheet2;
     private SweetSheet mSweetSheet3;
     private RelativeLayout rl;
-    Button Sheet1, Sheet2, Sheet3, Back, btnGo;
+    private Button Sheet1, Sheet2, Sheet3, Back, btnGo;
     private MapView mapView = null;
     private BaiduMap baiduMap;
     private List<Point> points2Travel = new ArrayList<Point>();
-    private RoutePlanSearch mSearch, mSearch2;
-    private int  i = 0;
+    private RoutePlanSearch mSearch;
+    private int pressBtnGo = 0;
+    private int point2Move = 0;
+    private double alertBound = 0.1;
+
+    //线路规划相关
+    OnGetRoutePlanResultListener mRoutePlanListener = new myOnGetRoutePlanResultListener();
 
     //定位相关
     public LocationClient mLocationClient = null;
-    private static final int UPDATE_TIME = 5000;//间隔时间之后重新获取定位
+    private static final int UPDATE_TIME = 10000;//间隔时间之后重新获取定位
     public BDLocationListener myListener = new MyLocationListener();//监听器
     BitmapDescriptor mCurrentMarker;//定位小图标
     MyLocationConfiguration.LocationMode mCurrentMode;//定位模式
@@ -107,7 +111,7 @@ public class MapActivity extends AppCompatActivity {
         //用户定位
         baiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
         baiduMap.setMyLocationEnabled(true);
-        mCurrentMarker = BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
+        mCurrentMarker = BitmapDescriptorFactory.fromResource(R.drawable.icon_gcodingm2);
         mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
         MyLocationConfiguration config = new MyLocationConfiguration(mCurrentMode,true,mCurrentMarker);
         baiduMap.setMyLocationConfigeration(config);
@@ -136,39 +140,45 @@ public class MapActivity extends AppCompatActivity {
         btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addMarkers();
-                mSearch = RoutePlanSearch.newInstance();
-                //mSearch2 = RoutePlanSearch.newInstance();
-                OnGetRoutePlanResultListener listener = new OnGetRoutePlanResultListener() {
-                    @Override
-                    public void onGetWalkingRouteResult(WalkingRouteResult walkingRouteResult) {
-                        if (walkingRouteResult.error == SearchResult.ERRORNO.NO_ERROR) {
-                            WalkingRouteOverlay overlay = new WalkingRouteOverlay(baiduMap);
-                            baiduMap.setOnMarkerClickListener(overlay);
-                            overlay.setData(walkingRouteResult.getRouteLines().get(0));
-                            overlay.addToMap();
-                            overlay.zoomToSpan();
-                        } else Log.e("mxy", "no result");
-                    }
-
-                    @Override
-                    public void onGetTransitRouteResult(TransitRouteResult transitRouteResult) {
-
-                    }
-
-                    @Override
-                    public void onGetDrivingRouteResult(DrivingRouteResult drivingRouteResult) {
-
-                    }
-
-                    @Override
-                    public void onGetBikingRouteResult(BikingRouteResult bikingRouteResult) {
-
-                    }
-                };
-                mSearch.setOnGetRoutePlanResultListener(listener);
                 //addMarkers();
-                if(i == 0) routineDrawing(i);
+                //mRoutePlanListener = new myOnGetRoutePlanResultListener();
+                pressBtnGo++;
+                if(point2Move == 0)
+                {
+                    addMarkers();
+                    routineDrawing(point2Move);
+                }
+//                mSearch = RoutePlanSearch.newInstance();
+//                OnGetRoutePlanResultListener listener = new OnGetRoutePlanResultListener() {
+//                    @Override
+//                    public void onGetWalkingRouteResult(WalkingRouteResult walkingRouteResult) {
+//                        if (walkingRouteResult.error == SearchResult.ERRORNO.NO_ERROR) {
+//                            WalkingRouteOverlay overlay = new WalkingRouteOverlay(baiduMap);
+//                            baiduMap.setOnMarkerClickListener(overlay);
+//                            overlay.setData(walkingRouteResult.getRouteLines().get(0));
+//                            overlay.addToMap();
+//                            overlay.zoomToSpan();
+//                        } else Log.e("mxy", "no result");
+//                    }
+//
+//                    @Override
+//                    public void onGetTransitRouteResult(TransitRouteResult transitRouteResult) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onGetDrivingRouteResult(DrivingRouteResult drivingRouteResult) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onGetBikingRouteResult(BikingRouteResult bikingRouteResult) {
+//
+//                    }
+//                };
+                //mSearch.setOnGetRoutePlanResultListener(mRoutePlanListener);
+                //addMarkers();
+                //if(i == 0) routineDrawing(i);
                 //记得这里需要销毁
                 //mSearch.destroy();
             }
@@ -185,16 +195,64 @@ public class MapActivity extends AppCompatActivity {
         getPointDaoListBySceneId(1000);
     }
 
+    private class myOnGetRoutePlanResultListener implements  OnGetRoutePlanResultListener
+    {
+        public void onGetWalkingRouteResult(WalkingRouteResult walkingRouteResult) {
+            if (walkingRouteResult.error == SearchResult.ERRORNO.NO_ERROR) {
+                WalkingRouteOverlay overlay = new WalkingRouteOverlay(baiduMap);
+                baiduMap.setOnMarkerClickListener(overlay);
+                overlay.setData(walkingRouteResult.getRouteLines().get(0));
+                overlay.addToMap();
+                overlay.zoomToSpan();
+            } else Log.e("mxy", "no result");
+        }
+
+        @Override
+        public void onGetTransitRouteResult(TransitRouteResult transitRouteResult) {
+
+        }
+
+        @Override
+        public void onGetDrivingRouteResult(DrivingRouteResult drivingRouteResult) {
+
+        }
+
+        @Override
+        public void onGetBikingRouteResult(BikingRouteResult bikingRouteResult) {
+
+        }
+    }
+
     private void routineDrawing(int i)
     {
        // PlanNode stNode = PlanNode.withCityNameAndPlaceName("北京", "北京交通大学逸夫楼");
         //PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", "北京交通大学思源楼");
-        PlanNode stNode = PlanNode.withCityNameAndPlaceName("北京",points2Travel.get(i++).getPname());
-        PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京",points2Travel.get(i++).getPname());
-        mSearch.walkingSearch((new WalkingRoutePlanOption())
-                .from(stNode)
-                .to(enNode));
-        //mSearch.destroy();
+        if(i < points2Travel.size() - 1)
+        {
+            if(mSearch != null) mSearch.destroy();
+            mSearch = RoutePlanSearch.newInstance();
+            mSearch.setOnGetRoutePlanResultListener(mRoutePlanListener);
+            PlanNode stNode = PlanNode.withCityNameAndPlaceName("北京",points2Travel.get(i).getPname());
+            PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京",points2Travel.get(i + 1).getPname());
+            Toast.makeText(MapActivity.this, points2Travel.get(i).getPname()+i, Toast.LENGTH_SHORT).show();
+            mSearch.walkingSearch((new WalkingRoutePlanOption())
+                    .from(stNode)
+                    .to(enNode));
+        }
+    }
+
+    private boolean isArriving(BDLocation location)
+    {
+        Point p;
+        if(points2Travel.size() > 0)
+        {
+            p = points2Travel.get(point2Move);
+            double distance = DistanceCalculator.getDistance(p.getPlong(), p.getPlat(),
+                                location.getLongitude(), location.getLatitude());
+            Toast.makeText(MapActivity.this, "" + distance, Toast.LENGTH_SHORT).show();
+            if(distance < alertBound) return true;
+        }
+        return false;
     }
 
     private void setButton(){
@@ -402,6 +460,7 @@ public class MapActivity extends AppCompatActivity {
         option.SetIgnoreCacheException(false);//可选，默认false，设置是否收集CRASH信息，默认收集
         option.setEnableSimulateGps(false);//可选，默认false，设置是否需要过滤gps仿真结果，默认需要
         mLocationClient.setLocOption(option);
+
     }
 
     //位置监听器
@@ -473,21 +532,40 @@ public class MapActivity extends AppCompatActivity {
             }
             Log.i("BaiduLocation", sb.toString());
 
+            //Toast.makeText(MapActivity.this,location.getLatitude()+"\n"+location.getLongitude(),Toast.LENGTH_SHORT).show();
             //在地图上显示位置信息
             MyLocationData locData = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
-                    .direction(100).latitude(location.getLatitude())
+                    .direction(0).latitude(location.getLatitude())
                     .longitude(location.getLongitude()).build();
             //设置定位数据
             baiduMap.setMyLocationData(locData);
             // 设置定位图层的配置（定位模式，是否允许方向信息，用户自定义定位图标）
+
+            //如果点击go按钮，判断当前用户位置是否进入景点列表的第n个景点
+            //如果进入，播放语音，线路规划换成下一组
+            if(pressBtnGo > 0)
+            {
+                if (isArriving(location)) {
+
+                    //后台播放语音
+                    Intent intent = new Intent(MapActivity.this, SoundService.class);
+                    intent.putExtra("playing", true);
+                    startService(intent);
+
+                    //绘制前往一下个景点的路线
+                    point2Move++;
+                    routineDrawing(point2Move);
+                }
+            }
+
             if (isFirstLoc)
             {
                 isFirstLoc = false;
                 LatLng ll = new LatLng(location.getLatitude(),
                         location.getLongitude());
                 MapStatus.Builder builder = new MapStatus.Builder();
-                builder.target(ll).zoom(18.0f);
+                builder.target(ll).zoom(17.0f);
                 baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
             }
         }
@@ -558,6 +636,7 @@ public class MapActivity extends AppCompatActivity {
     {
         @Override
         public boolean onMarkerClick(Marker marker) {
+            Log.i("!!!!!!!!!!!!!!!!!!!!", "zhixing");
             Log.d("marker",marker.toString());
             Intent intent = new Intent(MapActivity.this, CommentActivity.class);
             startActivity(intent);

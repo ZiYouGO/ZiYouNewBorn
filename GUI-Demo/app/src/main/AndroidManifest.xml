@@ -68,7 +68,15 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.mingle.ZiYou.content.TestMapActivity" />
-
+        <activity android:name="com.mingle.ZiYou.content.CommentActivity" />
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote"></service>
+        <service
+            android:name="com.mingle.ZiYou.content.SoundService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
