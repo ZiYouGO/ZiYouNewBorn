@@ -636,9 +636,12 @@ public class MapActivity extends AppCompatActivity {
     {
         @Override
         public boolean onMarkerClick(Marker marker) {
+            int pid = 18;
             Log.i("!!!!!!!!!!!!!!!!!!!!", "zhixing");
-            Log.d("marker",marker.toString());
-            Intent intent = new Intent(MapActivity.this, CommentActivity.class);
+            Log.d("marker", marker.toString());
+            Intent intent = new Intent();
+            intent.putExtra("pid",pid);
+            intent.setClass(MapActivity.this, CommentActivity.class);
             startActivity(intent);
             return false;
         }
