@@ -68,6 +68,8 @@ public class MapActivity extends AppCompatActivity {
     private Button Sheet1, Sheet2, Sheet3, Back, btnGo;
     private MapView mapView = null;
     private BaiduMap baiduMap;
+    private Point startPoint;
+    private Point endPoint;
     private List<Point> points2Travel = new ArrayList<Point>();
     private RoutePlanSearch mSearch;
     private int pressBtnGo = 0;
@@ -149,6 +151,8 @@ public class MapActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //addMarkers();
                 //mRoutePlanListener = new myOnGetRoutePlanResultListener();
+                points2Travel.add(0,startPoint);
+                points2Travel.add(points2Travel.size(),endPoint);
                 pressBtnGo++;
                 if(point2Move == 0)
                 {
@@ -254,7 +258,7 @@ public class MapActivity extends AppCompatActivity {
             mSearch = RoutePlanSearch.newInstance();
             mSearch.setOnGetRoutePlanResultListener(mRoutePlanListener);
             PlanNode stNode = PlanNode.withCityNameAndPlaceName("北京",points2Travel.get(i).getPname());
-            PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京",points2Travel.get(i + 1).getPname());
+            PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", points2Travel.get(i + 1).getPname());
             Toast.makeText(MapActivity.this, points2Travel.get(i).getPname()+i, Toast.LENGTH_SHORT).show();
             mSearch.walkingSearch((new WalkingRoutePlanOption())
                     .from(stNode)
@@ -335,6 +339,23 @@ public class MapActivity extends AppCompatActivity {
         mapView.onPause();
     }
 
+    private  ArrayList getData2(List<Point> points){
+        final ArrayList<MenuEntity> list = new ArrayList<>();
+        //添加假数据
+        MenuEntity menuEntity1 = new MenuEntity();
+        //menuEntity1.iconId = R.drawable.checkbox_empty;
+        menuEntity1.titleColor = 0xff000000;
+        menuEntity1.title = "                           确定路线";
+        list.add(menuEntity1);
+        for (int i=0;i<points.size();i++){
+            MenuEntity menuEntity = new MenuEntity();
+            menuEntity.titleColor = 0xff000000;
+            menuEntity.title = points.get(i).getPname();
+            list.add(menuEntity);
+        }
+        return  list;
+    }
+
     private  ArrayList getData(List<Point> points){
         final ArrayList<MenuEntity> list = new ArrayList<>();
         //添加假数据
@@ -363,7 +384,7 @@ public class MapActivity extends AppCompatActivity {
             public void onSuccess(final List<Point> object) {
                 mSweetSheet = new SweetSheet(rl);
 
-                final ArrayList<MenuEntity> list = getData(object);
+                final ArrayList<MenuEntity> list = getData2(object);
                 mSweetSheet.setMenuList(list);
 
                 mSweetSheet.setDelegate(new RecyclerViewDelegate(true));
@@ -374,16 +395,19 @@ public class MapActivity extends AppCompatActivity {
                     @Override
                     public boolean onItemClick(int position, MenuEntity menuEntity1) {
                         //即时改变当前项的颜色
-                        if (list.get(position).iconId == R.drawable.checkbox_empty && position != 0) {
-
-                            list.get(position).titleColor = 0xff5823ff;
-                            list.get(position).iconId = R.drawable.checkbox;
-                            points2Travel.add(object.get(position - 1));
-                            //Toast.makeText(MapActivity.this, points2Travel.get(0).getPname(), Toast.LENGTH_SHORT).show();
-                        } else if (list.get(position).iconId == R.drawable.checkbox && position != 0) {
+                        if (list.get(position).titleColor == 0xff000000){
+                            for (int i=0;i<list.size();i++){
+                                list.get(i).titleColor=0xff000000;
+                            }
+                            list.get(position).titleColor=0xff5823ff;
+                            startPoint=object.get(position-1);
+                        }else{
                             list.get(position).titleColor = 0xff000000;
-                            list.get(position).iconId = R.drawable.checkbox_empty;
+                            startPoint=null;
                         }
+
+                            //Toast.makeText(MapActivity.this, points2Travel.get(0).getPname(), Toast.LENGTH_SHORT).show();
+
                         ((RecyclerViewDelegate) mSweetSheet.getDelegate()).notifyDataSetChanged();
 
                         //根据返回值, true 会关闭 SweetSheet ,false 则不会.
@@ -415,7 +439,6 @@ public class MapActivity extends AppCompatActivity {
                         } else if (list.get(position).iconId == R.drawable.checkbox && position != 0) {
                             list2.get(position).titleColor = 0xff000000;
                             list2.get(position).iconId = R.drawable.checkbox_empty;
-
                         }
                         ((RecyclerViewDelegate) mSweetSheet2.getDelegate()).notifyDataSetChanged();
 
@@ -427,7 +450,7 @@ public class MapActivity extends AppCompatActivity {
 
                 mSweetSheet3 = new SweetSheet(rl);
 
-                final ArrayList<MenuEntity> list3 = getData(object);
+                final ArrayList<MenuEntity> list3 = getData2(object);
                 mSweetSheet3.setMenuList(list3);
 
                 mSweetSheet3.setDelegate(new RecyclerViewDelegate(true));
@@ -438,14 +461,15 @@ public class MapActivity extends AppCompatActivity {
                     @Override
                     public boolean onItemClick(int position, MenuEntity menuEntity1) {
                         //即时改变当前项的颜色
-                        if (list3.get(position).iconId == R.drawable.checkbox_empty && position != 0) {
-
-                            list3.get(position).titleColor = 0xff5823ff;
-                            list3.get(position).iconId = R.drawable.checkbox;
-                            points2Travel.add(object.get(position - 1));
-                        } else if ( list3.get(position).iconId == R.drawable.checkbox && position != 0) {
+                        if (list3.get(position).titleColor == 0xff000000){
+                            for (int i=0;i<list.size();i++){
+                                list3.get(i).titleColor=0xff000000;
+                            }
+                            list3.get(position).titleColor=0xff5823ff;
+                            endPoint=object.get(position-1);
+                        }else{
                             list3.get(position).titleColor = 0xff000000;
-                            list3.get(position).iconId = R.drawable.checkbox_empty;
+                            endPoint=null;
                         }
                         ((RecyclerViewDelegate) mSweetSheet3.getDelegate()).notifyDataSetChanged();
 
