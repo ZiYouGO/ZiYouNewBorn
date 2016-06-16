@@ -1,5 +1,6 @@
 package com.mingle.ZiYou.content;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -42,6 +43,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.mingle.ZiYou.bean.Point;
 import com.mingle.ZiYou.clusterutil.clustering.ClusterItem;
 import com.mingle.ZiYou.clusterutil.clustering.ClusterManager;
+import com.mingle.ZiYou.service.DownloadVoiceThread;
 import com.mingle.ZiYou.util.DistanceCalculator;
 import com.mingle.ZiYou.util.HillClimbing;
 import com.mingle.entity.MenuEntity;
@@ -684,7 +686,10 @@ public class MapActivity extends AppCompatActivity {
                         BmobFile bmobfile = p.getPmp3cn();
                         if (bmobfile != null) {
                             //调用bmobfile.download方法
-                            downloadFile(bmobfile);
+//                            downloadFile(bmobfile);
+                            DownloadVoiceThread thread=new DownloadVoiceThread(bmobfile.getUrl(),bmobfile.getFilename(), getApplicationContext()
+                            );
+                            thread.run();
                         }
                     }
                 }
