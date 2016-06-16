@@ -52,6 +52,7 @@ import com.mingle.sweetpick.SweetSheet;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
@@ -443,7 +444,7 @@ public class MapActivity extends AppCompatActivity {
                             list3.get(position).titleColor = 0xff5823ff;
                             list3.get(position).iconId = R.drawable.checkbox;
                             points2Travel.add(object.get(position - 1));
-                        } else if ( list3.get(position).iconId == R.drawable.checkbox && position != 0) {
+                        } else if (list3.get(position).iconId == R.drawable.checkbox && position != 0) {
                             list3.get(position).titleColor = 0xff000000;
                             list3.get(position).iconId = R.drawable.checkbox_empty;
                         }
@@ -618,7 +619,8 @@ public class MapActivity extends AppCompatActivity {
         for(Point p : points2Travel)
         {
             items.add(new MyItem(new LatLng(
-                    Double.parseDouble(p.getPlat()),Double.parseDouble(p.getPlong()))));
+                    Double.parseDouble(p.getPlat()),Double.parseDouble(p.getPlong()))
+                                ));
         }
 //        items.add(new MyItem(llA));
 //        items.add(new MyItem(llB));
@@ -633,7 +635,7 @@ public class MapActivity extends AppCompatActivity {
     /**
      * 每个Marker点，包含Marker点坐标以及图标
      */
-    public class MyItem implements ClusterItem {
+    public class MyItem implements ClusterItem{
         private final LatLng mPosition;
 
         public MyItem(LatLng latLng) {
@@ -657,16 +659,30 @@ public class MapActivity extends AppCompatActivity {
     {
         @Override
         public boolean onMarkerClick(Marker marker) {
-            int pid = 18;
-            Log.i("!!!!!!!!!!!!!!!!!!!!", "zhixing");
-            Log.d("marker", marker.toString());
+            //int pid = 18;
+            //Toast.makeText(MapActivity.this, "点击事件"+ getPIDByMarker(marker),Toast.LENGTH_SHORT).show();
             Intent intent = new Intent();
-            intent.putExtra("pid",pid);
+            intent.putExtra("pid",getPIDByMarker(marker));
             intent.setClass(MapActivity.this, CommentActivity.class);
             startActivity(intent);
             return false;
         }
     }
+
+    private int getPIDByMarker(Marker marker)
+    {
+        //int id = -1;
+        Iterator<Point> iterator = points2Travel.iterator();
+        while (iterator.hasNext())
+        {
+            Point p = iterator.next();
+            if(Double.parseDouble(p.getPlat()) == marker.getPosition().latitude
+                && Double.parseDouble(p.getPlong()) == marker.getPosition().longitude)
+                return p.getPid();
+        }
+        return -1;
+    }
+
     private View.OnClickListener myOnClickListener =new View.OnClickListener() {
         public void onClick(View v) {
             downloadMP3(1000);
