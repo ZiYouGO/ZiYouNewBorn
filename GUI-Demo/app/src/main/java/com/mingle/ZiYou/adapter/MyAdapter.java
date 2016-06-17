@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mingle.myapplication.R;
@@ -28,9 +28,9 @@ public class MyAdapter extends BaseAdapter {
      * @author Administrator
      */
     public final class Zujian{
-        public ImageView image;
+        public RelativeLayout image;
         public TextView title;
-        public TextView info;
+
     }
     @Override
     public int getCount() {
@@ -58,17 +58,18 @@ public class MyAdapter extends BaseAdapter {
             zujian=new Zujian();
             //获得组件，实例化组件
             convertView=layoutInflater.inflate(R.layout.list, null);
-            zujian.image=(ImageView)convertView.findViewById(R.id.image);
+            zujian.image=(RelativeLayout)convertView.findViewById(R.id.listLayout);
             zujian.title=(TextView)convertView.findViewById(R.id.title);
-            zujian.info=(TextView)convertView.findViewById(R.id.info);
+
             convertView.setTag(zujian);
         }else{
             zujian=(Zujian)convertView.getTag();
         }
         //绑定数据
-        zujian.image.setBackgroundResource((Integer)data.get(position).get("image"));
+        zujian.image.setBackgroundResource((Integer) data.get(position).get("image"));
+        zujian.image.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,400));
         zujian.title.setText((String)data.get(position).get("title"));
-        zujian.info.setText((String)data.get(position).get("info"));
+        //zujian.info.setText((String)data.get(position).get("info"));
         return convertView;
     }
 

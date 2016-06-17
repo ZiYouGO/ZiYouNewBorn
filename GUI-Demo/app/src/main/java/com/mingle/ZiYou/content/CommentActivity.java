@@ -14,7 +14,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.mingle.ZiYou.adapter.CommentAdapter;
-import com.mingle.ZiYou.adapter.MyAdapter;
 import com.mingle.ZiYou.bean.Comment;
 import com.mingle.myapplication.R;
 import com.qcloud.Module.Wenzhi;
@@ -38,13 +37,14 @@ public class CommentActivity extends AppCompatActivity {
     Button btn;
     EditText edit;
     int pid;
-
+    Button back;
     private JSONObject json_sensity__result;
     private JSONObject json_emotion_result;
     double negative;
     double sensity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //super.requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
 
@@ -53,6 +53,7 @@ public class CommentActivity extends AppCompatActivity {
         btn.setOnClickListener(new SendCommentBtnListener());
         edit = (EditText)findViewById(R.id.comment_edt);
         pid = getIntent().getIntExtra("pid",0);
+        back=(Button)findViewById(R.id.Comment_Back);
 
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads().detectDiskWrites().detectNetwork()
@@ -63,10 +64,16 @@ public class CommentActivity extends AppCompatActivity {
                 .build());
         //显示所有评论
         getCommentsByPointId(getIntent().getIntExtra("pid",0),this);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CommentActivity.this.finish();
+            }
+        });
         //评论显示在界面上
-
-
     }
+
+
 
     //获取用户输入评论数据
     public String getInputComment(EditText edit){
@@ -201,13 +208,15 @@ public class CommentActivity extends AppCompatActivity {
                 }
                 //评论显示在界面上
                 List<Map<String, Object>> list=new ArrayList<Map<String,Object>>();
+                //List<Map<String, Object>> list=getData();
                 for (int i = 0; i < comments.size(); i++) {
-                    Map<String, Object> map=new HashMap<String, Object>();
+                   Map<String, Object> map=new HashMap<String, Object>();
                     map.put("user", "用户"+comments.get(i).getObjectId());
                     map.put("comment", comments.get(i).getCtext());
-                    list.add(map);
+                   list.add(map);
                 }
-                listView.setAdapter(new CommentAdapter(context,list));
+
+                listView.setAdapter(new CommentAdapter(CommentActivity.this,list));
 
             }
             @Override
@@ -218,6 +227,18 @@ public class CommentActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public List<Map<String, Object>> getData(){
+        List<Map<String, Object>> list=new ArrayList<Map<String,Object>>();
+
+        for (int i = 0; i < 10; i++) {
+            Map<String, Object> map=new HashMap<String, Object>();
+            map.put("user","user"+i);
+            map.put("comment","comment"+i);
+            list.add(map);
+        }
+        return list;
     }
     public void addComment(int pid,String comment,int cgrade){
         Comment new_comment = new Comment();

@@ -1,117 +1,93 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#ff8b90af"
+                android:background="#ffffff"
                 android:id="@+id/rl"
                >
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:orientation="vertical"
-            android:layout_height="fill_parent"
-            android:weightSum="1">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.06">
-
-                <Button
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Back"
-                    android:id="@+id/Back"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
-                <Button
-                    android:id="@+id/download"
-                    android:text="download"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true" />
-            </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
 
             <com.baidu.mapapi.map.MapView
                 android:id="@+id/bmapView"
                 android:layout_width="fill_parent"
-                android:layout_height="420dp"
-                android:clickable="true" />
+                android:layout_height="fill_parent"
+                android:clickable="true"
+                android:layout_alignParentBottom="true" />
 
-            <LinearLayout
-                android:orientation="horizontal"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
+                android:layout_height="200px"
+                android:background="#e0ffffff"
+                android:id="@+id/relativeLayout"
+               >
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="起点"
-                    android:id="@+id/Sheet1"
-                    android:layout_weight="1" />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true">
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="途经点"
-                    android:id="@+id/Sheet2"
-                    android:layout_weight="1" />
+                    <Button
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="80px"
+                        android:layout_height="80px"
+                        android:background="@drawable/returnbutton"
+                        android:id="@+id/Back"
+                        android:layout_marginStart="15dp"
+                        android:layout_alignTop="@+id/download"
+                        android:layout_alignParentStart="true" />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="终点"
-                    android:id="@+id/Sheet3"
-                    android:layout_weight="1" />
-            </LinearLayout>
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="起点"
+                        android:id="@+id/Sheet1"
+                        android:background="@drawable/shape"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="途经点"
+                        android:id="@+id/Sheet2"
+                        android:background="@drawable/shape"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="终点"
+                        android:background="@drawable/shape"
+                        android:id="@+id/Sheet3"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:id="@+id/download"
+                        android:background="@drawable/download"
+                        android:layout_width="80px"
+                        android:layout_height="80px"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true" />
+
+                </LinearLayout>
+            </RelativeLayout>
 
             <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="GO!"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/big_button"
                 android:id="@+id/btn_go"
-                />
-            <!--<ImageView-->
-                <!--android:layout_width="48dp"-->
-                <!--android:layout_margin="20dp"-->
-
-                <!--android:src="@mipmap/ic_launcher"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:layout_height="200dp"/>-->
-            <!--<ImageView-->
-                <!--android:layout_width="48dp"-->
-                <!--android:layout_margin="100dp"-->
-
-                <!--android:src="@mipmap/ic_launcher"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:layout_height="400dp"/>-->
-            <!--<ImageView-->
-                <!--android:layout_width="48dp"-->
-                <!--android:layout_margin="100dp"-->
-
-                <!--android:src="@mipmap/ic_launcher"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:layout_height="400dp"/>-->
-            <!--<ImageView-->
-                <!--android:layout_width="48dp"-->
-                <!--android:layout_margin="100dp"-->
-
-                <!--android:src="@mipmap/ic_launcher"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:layout_height="400dp"/>-->
-
-
-        </LinearLayout>
-
-    </ScrollView>
-
+                android:layout_below="@+id/bmapView"
+                android:layout_marginTop="-200dp"
+                android:layout_marginLeft="200dp" />
+        </RelativeLayout>
 
 </RelativeLayout>

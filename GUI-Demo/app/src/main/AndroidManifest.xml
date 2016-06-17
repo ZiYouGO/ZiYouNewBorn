@@ -46,7 +46,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        >
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="34IHUpGAncAW6M0XYciQOwGKriZLBqGA" />
@@ -68,7 +69,8 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.mingle.ZiYou.content.TestMapActivity" />
-        <activity android:name="com.mingle.ZiYou.content.CommentActivity" />
+        <activity android:name="com.mingle.ZiYou.content.CommentActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
