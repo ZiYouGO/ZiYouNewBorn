@@ -1,5 +1,6 @@
 package com.mingle.ZiYou.content;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -42,6 +43,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.mingle.ZiYou.bean.Point;
 import com.mingle.ZiYou.clusterutil.clustering.ClusterItem;
 import com.mingle.ZiYou.clusterutil.clustering.ClusterManager;
+import com.mingle.ZiYou.service.DownloadVoiceThread;
 import com.mingle.ZiYou.util.DistanceCalculator;
 import com.mingle.ZiYou.util.HillClimbing;
 import com.mingle.entity.MenuEntity;
@@ -52,6 +54,7 @@ import com.mingle.sweetpick.SweetSheet;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
@@ -461,6 +464,7 @@ public class MapActivity extends AppCompatActivity {
                     @Override
                     public boolean onItemClick(int position, MenuEntity menuEntity1) {
                         //即时改变当前项的颜色
+<<<<<<< HEAD
                         if (list3.get(position).titleColor == 0xff000000){
                             for (int i=0;i<list.size();i++){
                                 list3.get(i).titleColor=0xff000000;
@@ -468,6 +472,14 @@ public class MapActivity extends AppCompatActivity {
                             list3.get(position).titleColor=0xff5823ff;
                             endPoint=object.get(position-1);
                         }else{
+=======
+                        if (list3.get(position).iconId == R.drawable.checkbox_empty && position != 0) {
+
+                            list3.get(position).titleColor = 0xff5823ff;
+                            list3.get(position).iconId = R.drawable.checkbox;
+                            points2Travel.add(object.get(position - 1));
+                        } else if (list3.get(position).iconId == R.drawable.checkbox && position != 0) {
+>>>>>>> origin/master
                             list3.get(position).titleColor = 0xff000000;
                             endPoint=null;
                         }
@@ -642,7 +654,8 @@ public class MapActivity extends AppCompatActivity {
         for(Point p : points2Travel)
         {
             items.add(new MyItem(new LatLng(
-                    Double.parseDouble(p.getPlat()),Double.parseDouble(p.getPlong()))));
+                    Double.parseDouble(p.getPlat()),Double.parseDouble(p.getPlong()))
+                                ));
         }
 //        items.add(new MyItem(llA));
 //        items.add(new MyItem(llB));
@@ -657,7 +670,7 @@ public class MapActivity extends AppCompatActivity {
     /**
      * 每个Marker点，包含Marker点坐标以及图标
      */
-    public class MyItem implements ClusterItem {
+    public class MyItem implements ClusterItem{
         private final LatLng mPosition;
 
         public MyItem(LatLng latLng) {
@@ -681,16 +694,30 @@ public class MapActivity extends AppCompatActivity {
     {
         @Override
         public boolean onMarkerClick(Marker marker) {
-            int pid = 18;
-            Log.i("!!!!!!!!!!!!!!!!!!!!", "zhixing");
-            Log.d("marker", marker.toString());
+            //int pid = 18;
+            //Toast.makeText(MapActivity.this, "点击事件"+ getPIDByMarker(marker),Toast.LENGTH_SHORT).show();
             Intent intent = new Intent();
-            intent.putExtra("pid",pid);
+            intent.putExtra("pid",getPIDByMarker(marker));
             intent.setClass(MapActivity.this, CommentActivity.class);
             startActivity(intent);
             return false;
         }
     }
+
+    private int getPIDByMarker(Marker marker)
+    {
+        //int id = -1;
+        Iterator<Point> iterator = points2Travel.iterator();
+        while (iterator.hasNext())
+        {
+            Point p = iterator.next();
+            if(Double.parseDouble(p.getPlat()) == marker.getPosition().latitude
+                && Double.parseDouble(p.getPlong()) == marker.getPosition().longitude)
+                return p.getPid();
+        }
+        return -1;
+    }
+
     private View.OnClickListener myOnClickListener =new View.OnClickListener() {
         public void onClick(View v) {
             downloadMP3(1000);
@@ -708,7 +735,10 @@ public class MapActivity extends AppCompatActivity {
                         BmobFile bmobfile = p.getPmp3cn();
                         if (bmobfile != null) {
                             //调用bmobfile.download方法
-                            downloadFile(bmobfile);
+//                            downloadFile(bmobfile);
+                            DownloadVoiceThread thread=new DownloadVoiceThread(bmobfile.getUrl(),bmobfile.getFilename(), getApplicationContext()
+                            );
+                            thread.run();
                         }
                     }
                 }
