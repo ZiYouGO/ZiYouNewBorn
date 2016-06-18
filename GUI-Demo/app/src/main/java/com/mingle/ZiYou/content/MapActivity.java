@@ -471,6 +471,17 @@ public class MapActivity extends AppCompatActivity {
                             list3.get(position).titleColor=0xff5823ff;
                             endPoint=object.get(position-1);
                         }else{
+<<<<<<< HEAD
+=======
+//=======
+//                        if (list3.get(position).iconId == R.drawable.checkbox_empty && position != 0) {
+//
+//                            list3.get(position).titleColor = 0xff5823ff;
+//                            list3.get(position).iconId = R.drawable.checkbox;
+//                            points2Travel.add(object.get(position - 1));
+//                        } else if (list3.get(position).iconId == R.drawable.checkbox && position != 0) {
+//>>>>>>> origin/master
+>>>>>>> origin/master
                             list3.get(position).titleColor = 0xff000000;
                             endPoint=null;
                         }
