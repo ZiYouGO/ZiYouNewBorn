@@ -57,6 +57,20 @@ private List<Scene> scenes=new ArrayList<Scene>();
             map.put("info", "information"+i);
             list.add(map);
         }
+        Map<String, Object> map1=new HashMap<String, Object>();
+        map1.put("image", R.drawable.gubeishuizhen);
+        map1.put("title", "北京古北水镇");
+        list.add(map1);
+
+        Map<String, Object> map2=new HashMap<String, Object>();
+        map2.put("image", R.drawable.gugong);
+        map2.put("title", "北京故宫");
+        list.add(map2);
+
+        Map<String, Object> map3=new HashMap<String, Object>();
+        map3.put("image", R.drawable.yiheyuan);
+        map3.put("title", "北京颐和园");
+        list.add(map3);
         return list;
     }
 

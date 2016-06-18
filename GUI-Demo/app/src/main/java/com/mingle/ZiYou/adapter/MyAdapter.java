@@ -67,7 +67,7 @@ public class MyAdapter extends BaseAdapter {
         }
         //绑定数据
         zujian.image.setBackgroundResource((Integer) data.get(position).get("image"));
-        zujian.image.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,400));
+        zujian.image.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,500));
         zujian.title.setText((String)data.get(position).get("title"));
         //zujian.info.setText((String)data.get(position).get("info"));
         return convertView;

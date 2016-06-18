@@ -1,6 +1,5 @@
 package com.mingle.ZiYou.content;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -439,7 +438,7 @@ public class MapActivity extends AppCompatActivity {
                             list2.get(position).iconId = R.drawable.checkbox;
 
                             points2Travel.add(object.get(position - 1));
-                        } else if (list.get(position).iconId == R.drawable.checkbox && position != 0) {
+                        } else if (list2.get(position).iconId == R.drawable.checkbox && position != 0) {
                             list2.get(position).titleColor = 0xff000000;
                             list2.get(position).iconId = R.drawable.checkbox_empty;
                         }
@@ -464,7 +463,7 @@ public class MapActivity extends AppCompatActivity {
                     @Override
                     public boolean onItemClick(int position, MenuEntity menuEntity1) {
                         //即时改变当前项的颜色
-<<<<<<< HEAD
+
                         if (list3.get(position).titleColor == 0xff000000){
                             for (int i=0;i<list.size();i++){
                                 list3.get(i).titleColor=0xff000000;
@@ -472,14 +471,6 @@ public class MapActivity extends AppCompatActivity {
                             list3.get(position).titleColor=0xff5823ff;
                             endPoint=object.get(position-1);
                         }else{
-=======
-                        if (list3.get(position).iconId == R.drawable.checkbox_empty && position != 0) {
-
-                            list3.get(position).titleColor = 0xff5823ff;
-                            list3.get(position).iconId = R.drawable.checkbox;
-                            points2Travel.add(object.get(position - 1));
-                        } else if (list3.get(position).iconId == R.drawable.checkbox && position != 0) {
->>>>>>> origin/master
                             list3.get(position).titleColor = 0xff000000;
                             endPoint=null;
                         }
