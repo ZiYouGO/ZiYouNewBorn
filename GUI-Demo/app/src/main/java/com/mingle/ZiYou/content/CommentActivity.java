@@ -70,7 +70,6 @@ public class CommentActivity extends AppCompatActivity {
                 CommentActivity.this.finish();
             }
         });
-        //评论显示在界面上
     }
 
 
@@ -128,11 +127,14 @@ public class CommentActivity extends AppCompatActivity {
             addComment(pid,commentStr,10 - Integer.parseInt(new java.text.DecimalFormat("0").format(grade*10)));
 
     }
+    //按钮事件
     class SendCommentBtnListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             try {
                 addData(pid,getInputComment(edit));
+                getCommentsByPointId(getIntent().getIntExtra("pid",0),getApplicationContext());
+                edit.setText("");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -211,7 +213,7 @@ public class CommentActivity extends AppCompatActivity {
                 //List<Map<String, Object>> list=getData();
                 for (int i = 0; i < comments.size(); i++) {
                    Map<String, Object> map=new HashMap<String, Object>();
-                    map.put("user", "用户"+comments.get(i).getObjectId());
+                    map.put("user", "用户"+comments.get(i).getObjectId().substring(0,4));
                     map.put("comment", comments.get(i).getCtext());
                    list.add(map);
                 }
@@ -229,17 +231,6 @@ public class CommentActivity extends AppCompatActivity {
 
     }
 
-    public List<Map<String, Object>> getData(){
-        List<Map<String, Object>> list=new ArrayList<Map<String,Object>>();
-
-        for (int i = 0; i < 10; i++) {
-            Map<String, Object> map=new HashMap<String, Object>();
-            map.put("user","user"+i);
-            map.put("comment","comment"+i);
-            list.add(map);
-        }
-        return list;
-    }
     public void addComment(int pid,String comment,int cgrade){
         Comment new_comment = new Comment();
         new_comment.setCgrade(cgrade);
